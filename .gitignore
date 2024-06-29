@@ -1,0 +1,12 @@
+# Ignore files. Use *extension to ignore a complete type of file.
+*venv
+*vscode
+*idea
+public
+*vendor
+vendor
+__pycache__
+node_modules
+package-lock.json
+package.json
+
