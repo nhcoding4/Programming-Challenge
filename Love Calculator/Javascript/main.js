@@ -1,5 +1,5 @@
 "use strict";
-const readline = require("readline-sync")
+const prompt = require("prompt-sync")()
 
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -12,14 +12,14 @@ class LoveCalculator {
     // Get 2 names from the user.
 
     get Name1() {
-        return this.firstName = this.nameInput("Enter the name of the first person:")
+        return this.firstName = prompt("Enter a the first name: ")
     }
     get Name2() {
-        return this.secondName = this.nameInput("Enter the name of the second person:")
+        return this.secondName = prompt("Enter the second name: ")
     }
 
     // ----------------------------------------------------
-    
+
     // Sum frequency of characters.
 
     get Record() {
@@ -65,15 +65,6 @@ class LoveCalculator {
         }
 
         return this.loveScore = `${this.numbers[0]}${this.numbers[1]}%`
-    }
-
-    // ----------------------------------------------------
-
-    // Helper
-
-    nameInput(prompt) {
-        console.log(prompt)
-        return String(readline.question())
     }
 }
 
