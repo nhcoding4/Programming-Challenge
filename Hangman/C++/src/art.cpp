@@ -66,3 +66,4 @@ string art(const int option)
 
       return ascii_art[option];
 }
+
