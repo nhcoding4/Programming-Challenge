@@ -165,11 +165,7 @@ var Backgrounds = /** @class */ (function () {
     return Backgrounds;
 }());
 // --------------------------------------------------------------------------------------------------------------------
-function main() {
+window.addEventListener("load", function () {
     var background = new Backgrounds();
     background.run();
-}
-// --------------------------------------------------------------------------------------------------------------------
-window.addEventListener("load", function () {
-    main();
 });
