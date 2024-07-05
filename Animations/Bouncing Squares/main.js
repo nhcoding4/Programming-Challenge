@@ -23,7 +23,7 @@ var Box = /** @class */ (function () {
         (_a = this.context) === null || _a === void 0 ? void 0 : _a.fillRect(this.x, this.y, this.width, this.height);
     };
     // -----------------------------------------------------
-    // Set the random direction for the object.
+    // Set the starting direction for the object.
     Box.prototype.randomizeDirection = function () {
         var randomize = (function (direction) {
             var choice = Math.floor(Math.random() * 2);
@@ -40,7 +40,7 @@ var Box = /** @class */ (function () {
         return i;
     };
     // -----------------------------------------------------
-    // Updates the position to be drawn on the next frame.
+    // Updates the position to be drawn on the next frame and collision detection.
     Box.prototype.update = function () {
         var objectXEdge = this.x + this.width;
         var objectYEdge = this.y + this.height;
@@ -53,10 +53,10 @@ var Box = /** @class */ (function () {
                 this.movementX = this.setSpeed();
             }
             if (this.x < 0) {
-                this.x = 0;
+                this.x = 0 + this.width;
             }
             if (this.x > this.canvasWidth) {
-                this.x = this.canvasWidth;
+                this.x = this.canvasWidth - this.width;
             }
         }
         if (this.y <= 0 || objectYEdge >= this.canvasHeight) {
@@ -68,12 +68,19 @@ var Box = /** @class */ (function () {
                 this.movementY = this.setSpeed();
             }
             if (this.y < 0) {
-                this.y = 0;
+                this.y = 0 + this.height;
             }
             if (this.y > this.canvasHeight) {
-                this.y = this.canvasHeight;
+                this.y = this.canvasHeight - this.height;
             }
         }
+        this.x += this.movementX;
+        this.y += this.movementY;
+    };
+    // -----------------------------------------------------
+    Box.prototype.reverse = function () {
+        this.movementY *= -1;
+        this.movementX *= -1;
         this.x += this.movementX;
         this.y += this.movementY;
     };
@@ -82,7 +89,7 @@ var Box = /** @class */ (function () {
 // --------------------------------------------------------------------------------------------------------------------
 var Game = /** @class */ (function () {
     function Game() {
-        this.enemies = [];
+        this.boxes = [];
         this.height = 1000;
         this.width = 500;
         this.totalBoxes = 20;
@@ -95,14 +102,34 @@ var Game = /** @class */ (function () {
         var _this = this;
         var _a;
         (_a = this.context) === null || _a === void 0 ? void 0 : _a.clearRect(0, 0, this.width, this.height);
-        for (var _i = 0, _b = this.enemies; _i < _b.length; _i++) {
+        for (var _i = 0, _b = this.boxes; _i < _b.length; _i++) {
             var object = _b[_i];
             object.draw();
             object.update();
+            this.checkCollision();
         }
         requestAnimationFrame(function () {
             _this.animate();
         });
+    };
+    // -----------------------------------------------------
+    Game.prototype.checkCollision = function () {
+        var length = this.boxes.length;
+        for (var i = 0; i < length; i++) {
+            var currentBox = this.boxes[i];
+            for (var j = 0; j < length; j++) {
+                if (i == j) {
+                    continue;
+                }
+                var otherBox = this.boxes[j];
+                if (Math.abs(currentBox.x - otherBox.x) <= 10) {
+                    if (Math.abs(currentBox.y - otherBox.y) <= 10) {
+                        currentBox.reverse();
+                        otherBox.reverse();
+                    }
+                }
+            }
+        }
     };
     // -----------------------------------------------------
     // Canvas properties.
@@ -132,10 +159,10 @@ var Game = /** @class */ (function () {
         var colours = ["red", "blue", "green", "yellow", "purple", "pink", "black"];
         var colourSelection = colours[Math.floor(Math.random() * colours.length)];
         var newBox = new Box(xPos, yPos, ySize, xSize, this.width, this.height, this.context, colourSelection);
-        this.enemies.push(newBox);
+        this.boxes.push(newBox);
     };
     // -----------------------------------------------------
-    // Mainloop.
+    // Sets up the game. Starts the recursive animation function.
     Game.prototype.run = function () {
         for (var i = 0; i < this.totalBoxes; i++) {
             this.createBox();

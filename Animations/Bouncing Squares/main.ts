@@ -89,10 +89,10 @@ class Box {
             }
 
             if (this.x < 0) {
-                this.x = 0
+                this.x = 0 + this.width
             }
             if (this.x > this.canvasWidth) {
-                this.x = this.canvasWidth
+                this.x = this.canvasWidth - this.width
             }
         }
 
@@ -105,10 +105,10 @@ class Box {
             }
 
             if (this.y < 0) {
-                this.y = 0
+                this.y = 0 + this.height
             }
             if (this.y > this.canvasHeight) {
-                this.y = this.canvasHeight
+                this.y = this.canvasHeight - this.height
             }
         }
 
@@ -117,6 +117,15 @@ class Box {
     }
 
     // -----------------------------------------------------
+
+    reverse() {
+        this.movementY *= -1
+        this.movementX *= -1
+
+        this.x += this.movementX
+        this.y += this.movementY
+    }
+
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -124,13 +133,13 @@ class Box {
 class Game {
     canvas: HTMLCanvasElement
     context: CanvasRenderingContext2D | null
-    enemies: Box[]
+    boxes: Box[]
     totalBoxes: number
     height: number
     width: number
 
     constructor() {
-        this.enemies = []
+        this.boxes = []
         this.height = 1000
         this.width = 500
         this.totalBoxes = 20
@@ -146,14 +155,40 @@ class Game {
     animate() {
         this.context?.clearRect(0, 0, this.width, this.height)
 
-        for (let object of this.enemies) {
+        for (let object of this.boxes) {
             object.draw()
             object.update()
+            this.checkBoxCollision()
         }
 
         requestAnimationFrame(() => {
             this.animate()
         })
+    }
+
+    // -----------------------------------------------------
+
+    // Deals with collision with other boxes.
+
+    checkBoxCollision() {
+        const length = this.boxes.length
+
+        for (let i = 0; i < length; i++) {
+            let currentBox = this.boxes[i]
+
+            for (let j = 0; j < length; j++) {
+                if (i == j) {
+                    continue
+                }
+                let otherBox = this.boxes[j]
+                if (Math.abs(currentBox.x - otherBox.x) <= 10) {
+                    if (Math.abs(currentBox.y - otherBox.y) <= 10) {
+                        currentBox.reverse()
+                        otherBox.reverse()
+                    }
+                }
+            }
+        }
     }
 
     // -----------------------------------------------------
@@ -195,7 +230,7 @@ class Game {
         const colourSelection = colours[Math.floor(Math.random() * colours.length)]
 
         const newBox = new Box(xPos, yPos, ySize, xSize, this.width, this.height, this.context, colourSelection)
-        this.enemies.push(newBox)
+        this.boxes.push(newBox)
     }
 
     // -----------------------------------------------------
