@@ -49,7 +49,7 @@ class Box {
 
     // -----------------------------------------------------
 
-    // Set the random direction for the object.
+    // Set the starting direction for the object.
 
     randomizeDirection() {
         const randomize = ((direction: number): number => {
@@ -74,7 +74,7 @@ class Box {
 
     // -----------------------------------------------------
 
-    // Updates the position to be drawn on the next frame.
+    // Updates the position to be drawn on the next frame and collision detection.
 
     update() {
         const objectXEdge = this.x + this.width
@@ -200,7 +200,7 @@ class Game {
 
     // -----------------------------------------------------
 
-    // Mainloop.
+    // Sets up the game. Starts the recursive animation function.
 
     run() {
         for (let i = 0; i < this.totalBoxes; i++) {
