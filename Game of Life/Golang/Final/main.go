@@ -11,12 +11,12 @@ func main() {
 	// -------------------------------
 
 	// Create Window, cell size and set fps. Keep the aspect ratio 16:9 for correct fullscreen fill.
-	const screen_width = 1920
-	const screen_height = 1080
-	const cells_size = 5
+	screen_width := 1920
+	screen_height := 1080
+	cells_size := 5
 	const title = "Game of Life"
 	target_fps := int32(60)
-	rl.InitWindow(screen_width, screen_height, title)
+	rl.InitWindow(int32(screen_width), int32(screen_height), title)
 	rl.SetTargetFPS(target_fps)
 
 	// Create a simulation object. This controls the game.
