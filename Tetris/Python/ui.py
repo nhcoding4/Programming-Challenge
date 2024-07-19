@@ -10,7 +10,7 @@ class UI:
     def __init__(self):
         self.base_font_size = 64
         self.font = pr.load_font_ex(
-            (os.getcwd() + "/font.ttf").encode(), self.base_font_size, None, 0
+            (os.getcwd() + "/Fonts/font.ttf").encode(), self.base_font_size, None, 0
         )
         self.colors: list[pr.Color] = colors()
         self.font_size = self.base_font_size / 2

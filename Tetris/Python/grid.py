@@ -18,6 +18,8 @@ class Grid:
     # -------------------------------------------------------------------------
 
     def clear_full_rows(self) -> int:
+        """Clears the full rows and returns the amount of rows the user cleared."""
+
         completed = 0
         for i in range(self.rows - 1, -1, -1):
             if self.is_row_full(i):

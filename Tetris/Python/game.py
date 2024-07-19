@@ -1,6 +1,7 @@
 from grid import *
 from blocks import *
 from ui import *
+from sounds import *
 from datetime import datetime, timedelta
 import random
 import pyray as pr
@@ -17,6 +18,8 @@ class Game:
         self.background_color = pr.Color(44, 44, 127, 255)
         self.targetFPS = 144
         self.setup_window()
+
+        self.sound = Sounds()
 
         self.ui = UI()
 
@@ -126,24 +129,26 @@ class Game:
             self.game_over = False
             self.reset()
 
+        match key_pressed:
+            case pr.KeyboardKey.KEY_UP:
+                self.rotate_block()
+            case pr.KeyboardKey.KEY_SPACE:
+                self.snap_block_down()
+            case _:
+                pass
+
         now: datetime = datetime.now()
 
         if pr.is_key_down(pr.KeyboardKey.KEY_LEFT) and now > self.next_move_delta:
             self.move_block_left()
             self.calculate_move_delta()
-        elif pr.is_key_down(pr.KeyboardKey.KEY_RIGHT) and now > self.next_move_delta:
+        if pr.is_key_down(pr.KeyboardKey.KEY_RIGHT) and now > self.next_move_delta:
             self.move_block_right()
             self.calculate_move_delta()
         elif pr.is_key_down(pr.KeyboardKey.KEY_DOWN) and now > self.next_move_delta:
             self.move_block_down()
             self.calculate_move_delta()
             self.update_score(0, 1)
-
-        if key_pressed == pr.KeyboardKey.KEY_UP:
-            self.rotate_block()
-
-        if key_pressed == pr.KeyboardKey.KEY_SPACE:
-            self.snap_block_down()
 
     # -------------------------------------------------------------------------
 
@@ -176,10 +181,13 @@ class Game:
         self.next_block = self.get_block()
 
         rows_cleared: int = self.grid.clear_full_rows()
-        self.update_score(rows_cleared, 0)
-        self.rows_cleared += rows_cleared
 
-        if self.rows_cleared >= 10:
+        if rows_cleared > 0:
+            self.sound.play_clear_sound()
+            self.update_score(rows_cleared, 0)
+            self.rows_cleared += rows_cleared
+
+        if self.rows_cleared >= 3:
             self.time_delta *= 0.9
             self.rows_cleared = 0
 
@@ -227,6 +235,8 @@ class Game:
 
             if self.is_block_outside_grid() or not self.block_fits():
                 self.current_block.undo_rotation()
+            else:
+                self.sound.play_rotate_sound()
 
     # -------------------------------------------------------------------------
 
@@ -253,14 +263,18 @@ class Game:
         """All drawing and game state updates must be called here."""
 
         while not pr.window_should_close():
+            pr.update_music_stream(self.sound.music)
             self.handle_input()
             self.automatic_move_down()
 
             pr.begin_drawing()
+
             pr.clear_background(self.background_color)
             self.draw()
+
             pr.end_drawing()
 
+        self.sound.close_audio_device()
         pr.close_window()
 
     # -------------------------------------------------------------------------
