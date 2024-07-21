@@ -12,3 +12,6 @@ package.json
 *gitattributes
 *parcelcache
 *Testing
+*lockb
+tsconfig.json
+build.js

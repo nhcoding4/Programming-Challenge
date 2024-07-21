@@ -23,3 +23,5 @@ function isPrime(number::Int)::Bool
 end
 
 main()
+
+
