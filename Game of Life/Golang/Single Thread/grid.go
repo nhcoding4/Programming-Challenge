@@ -15,7 +15,7 @@ type Grid struct {
 
 func (g *Grid) Calculate_Size(height int, width int) {
 	// Creates a grid heigth and width.
-	
+
 	g.rows = height / g.cell_size
 	g.columns = width / g.cell_size
 }
@@ -46,7 +46,7 @@ func (g *Grid) Draw() {
 			if g.cells[i][j] == 0 {
 				colour = rl.Black
 			}
-			rl.DrawRectangle(int32(j*g.cell_size), int32(i*g.cell_size), int32(g.cell_size-1), int32(g.cell_size-1), colour)
+			rl.DrawRectangle(int32(j*g.cell_size)+1, int32(i*g.cell_size)+1, int32(g.cell_size-1), int32(g.cell_size-1), colour)
 		}
 	}
 }

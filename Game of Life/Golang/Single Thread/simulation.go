@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
@@ -51,6 +53,13 @@ func (s *Simulation) Count_Live_Neighbors(row int, column int) int {
 		live_neighbors += s.grid.cells[neighbor_row][neighbor_column]
 	}
 	return live_neighbors
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+func (s *Simulation) fps() {
+	fps := rl.GetFPS()
+	rl.DrawText(fmt.Sprintf("%v", fps), 0, 0, 40, rl.Green)
 }
 
 // --------------------------------------------------------------------------------------------------------------------
