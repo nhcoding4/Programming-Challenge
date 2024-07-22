@@ -21,6 +21,17 @@ void checkScreenSizeChange(Config *config, Effect *effect)
 
 // --------------------------------------------------------------------------------------------------------------------
 
+void displayFPS()
+{
+    int currentFPS = GetFPS();
+    char fpsStr[4];
+    sprintf(fpsStr, "%d", currentFPS);
+
+    DrawText(fpsStr, 0, 0, 40, GREEN);
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
 void initSimulation(Config *config)
 {
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);

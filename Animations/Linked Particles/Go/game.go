@@ -1,19 +1,23 @@
 package main
 
 import (
+	"fmt"
+
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
 type Game struct {
-	width           int32
-	height          int32
-	title           string
-	targetFPS       int32
-	backgroundColor *rl.Color
-	effect          *Effect
-	mouse           *Mouse
-	mouseRadius     int32
-	totalParticles  int32
+	width               int32
+	height              int32
+	title               string
+	targetFPS           int32
+	backgroundColor     *rl.Color
+	effect              *Effect
+	mouse               *Mouse
+	mouseRadius         int32
+	totalParticles      int32
+	powerPushMultiplier float64
+	linkDistance        int32
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -30,10 +34,12 @@ func (g *Game) init() {
 
 func (g *Game) createEffect() {
 	g.effect = &Effect{
-		width:          g.width,
-		height:         g.height,
-		totalParticles: g.totalParticles,
-		mouse:          g.mouse,
+		width:               g.width,
+		height:              g.height,
+		totalParticles:      g.totalParticles,
+		mouse:               g.mouse,
+		powerPushMultiplier: g.powerPushMultiplier,
+		linkDistance:        g.linkDistance,
 	}
 	g.effect.init()
 }
@@ -48,6 +54,13 @@ func (g *Game) createMouse() {
 
 // ---------------------------------------------------------------------------------------------------------------------
 
+func (g *Game) displayFps() {
+	fps := rl.GetFPS()
+	rl.DrawText(fmt.Sprintf("%v", fps), 0, 0, 40, rl.Green)
+}
+
+// ---------------------------------------------------------------------------------------------------------------------
+
 func (g *Game) run() {
 	for !rl.WindowShouldClose() {
 		g.updateState()
@@ -55,6 +68,7 @@ func (g *Game) run() {
 		rl.BeginDrawing()
 		rl.ClearBackground(*g.backgroundColor)
 		g.effect.draw()
+		g.displayFps()
 		rl.EndDrawing()
 	}
 	rl.CloseWindow()

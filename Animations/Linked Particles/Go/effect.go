@@ -7,19 +7,19 @@ import (
 )
 
 type Effect struct {
-	width          int32
-	height         int32
-	linkDistance   int32
-	particles      []*Particle
-	mouse          *Mouse
-	totalParticles int32
+	width               int32
+	height              int32
+	linkDistance        int32
+	particles           []*Particle
+	mouse               *Mouse
+	totalParticles      int32
+	powerPushMultiplier float64
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
 
 func (e *Effect) init() {
 	e.createParticles()
-	e.linkDistance = 100
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -54,9 +54,10 @@ func (e *Effect) connectParticles() {
 func (e *Effect) createParticles() {
 	for range e.totalParticles {
 		newParticle := Particle{
-			width:  e.width,
-			height: e.height,
-			mouse:  e.mouse,
+			width:               e.width,
+			height:              e.height,
+			mouse:               e.mouse,
+			powerPushMultiplier: e.powerPushMultiplier,
 		}
 		newParticle.init()
 		e.particles = append(e.particles, &newParticle)

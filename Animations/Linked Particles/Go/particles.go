@@ -8,17 +8,18 @@ import (
 )
 
 type Particle struct {
-	width     int32
-	height    int32
-	radius    int32
-	x         int32
-	y         int32
-	movementX int32
-	movementY int32
-	pushX     float64
-	pushY     float64
-	friction  float64
-	mouse     *Mouse
+	width               int32
+	height              int32
+	radius              int32
+	x                   int32
+	y                   int32
+	movementX           int32
+	movementY           int32
+	powerPushMultiplier float64
+	pushX               float64
+	pushY               float64
+	friction            float64
+	mouse               *Mouse
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -81,7 +82,7 @@ func (p *Particle) pushParticle() {
 
 	distance := math.Hypot(dx, dy)
 	if distance < float64(*p.mouse.getRadius()) {
-		power := float64(*p.mouse.getRadius()) / distance
+		power := (float64(*p.mouse.getRadius()) / distance) * p.powerPushMultiplier
 		angle := math.Atan2(dy, dx)
 		p.pushX = math.Cos(angle) * power
 		p.pushY = math.Sin(angle) * power

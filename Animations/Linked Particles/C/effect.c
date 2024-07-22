@@ -2,7 +2,8 @@
 
 // --------------------------------------------------------------------------------------------------------------------
 
-Effect makeEffect(int windowWidth, int windowHeight, int totalParticles, int connectionDistance, double mouseRadius)
+Effect makeEffect(int windowWidth, int windowHeight, int totalParticles, int connectionDistance, double mouseRadius,
+                  double lineThickness, double pushPower)
 {
     Effect effect = {
         windowHeight : windowHeight,
@@ -11,6 +12,8 @@ Effect makeEffect(int windowWidth, int windowHeight, int totalParticles, int con
         connectionDistance : connectionDistance,
         particles : NULL,
         mouseRadius : mouseRadius,
+        lineThickness : lineThickness,
+        pushPower : pushPower,
     };
 
     addParticles(&effect);
@@ -26,7 +29,7 @@ void addParticles(Effect *effect)
 
     for (int i = 0; i < effect->totalParticles; i++)
     {
-        Particle newParticle = makeParticle(effect->windowWidth, effect->windowHeight, effect->mouseRadius);
+        Particle newParticle = makeParticle(effect->windowWidth, effect->windowHeight);
         particleArray[i] = newParticle;
     }
 
@@ -58,7 +61,7 @@ void connectParticles(Effect *effect)
                 Vector2 end = {effect->particles[j].x, effect->particles[j].y};
                 Color color = {255, 255, 255, (int)255 * opacity};
 
-                DrawLineEx(start, end, 2.5, color);
+                DrawLineEx(start, end, effect->lineThickness, color);
             }
         }
     }
@@ -87,9 +90,15 @@ void freeEffect(Effect *effect)
 
 void update(Effect *effect)
 {
+    if (IsMouseButtonDown(MOUSE_BUTTON_LEFT))
+    {
+        effect->mouseX = GetMouseX();
+        effect->mouseY = GetMouseY();
+    }
+
     for (int i = 0; i < effect->totalParticles; i++)
     {
-        updateParticle(&effect->particles[i]);
+        updateParticle(&effect->particles[i], effect);
     }
 }
 

@@ -8,12 +8,14 @@ int main()
     int totalParticles = 1000;
     int connectionDistance = 200;
     int mouseRadius = 250;
+    double lineThickness = 2.5;
+    double pushPower = 3.0;
     char *title = "Particles";
 
     Config simulation = makeConfig(windowWidth, windowHeight, targetFPS, totalParticles, title);
     initSimulation(&simulation);
 
-    Effect effect = makeEffect(windowWidth, windowHeight, totalParticles, connectionDistance, mouseRadius);
+    Effect effect = makeEffect(windowWidth, windowHeight, totalParticles, connectionDistance, mouseRadius, lineThickness, pushPower);
 
     while (!WindowShouldClose())
     {
@@ -23,6 +25,7 @@ int main()
         BeginDrawing();
         ClearBackground(BLACK);
         drawEffect(&effect);
+        displayFPS();
         EndDrawing();
     }
 

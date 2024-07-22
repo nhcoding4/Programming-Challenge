@@ -2,7 +2,7 @@
 
 // --------------------------------------------------------------------------------------------------------------------
 
-Particle makeParticle(int windowWidth, int windowHeight, double mouseRadius)
+Particle makeParticle(int windowWidth, int windowHeight)
 {
     Particle particle = {
         windowWidth : windowWidth,
@@ -15,7 +15,6 @@ Particle makeParticle(int windowWidth, int windowHeight, double mouseRadius)
         pushX : 0.0,
         pushY : 0.0,
         friction : 0.0,
-        mouseRadius : mouseRadius,
     };
 
     setPosition(&particle);
@@ -70,18 +69,16 @@ void moveParticle(Particle *particle)
 
 // --------------------------------------------------------------------------------------------------------------------
 
-void pushParticle(Particle *particle, double mouseRadius)
+void pushParticle(Particle *particle, Effect *effect)
 {
-    int mouseX = GetMouseX();
-    int mouseY = GetMouseY();
-    double dx = (particle->x - mouseX);
-    double dy = (particle->y - mouseY);
+    double dx = (particle->x - effect->mouseX);
+    double dy = (particle->y - effect->mouseY);
 
     double distance = hypot(dx, dy);
 
-    if (distance < mouseRadius)
+    if (distance < effect->mouseRadius)
     {
-        double power = (mouseRadius / distance) * 3;
+        double power = (effect->mouseRadius / distance) * effect->pushPower;
         double angle = atan2(dy, dx);
         particle->pushX = cos(angle) * power;
         particle->pushY = sin(angle) * power;
@@ -116,11 +113,11 @@ void setPosition(Particle *particle)
 
 // --------------------------------------------------------------------------------------------------------------------
 
-void updateParticle(Particle *particle)
+void updateParticle(Particle *particle, Effect *effect)
 {
     if (IsMouseButtonDown(MOUSE_BUTTON_LEFT))
     {
-        pushParticle(particle, particle->mouseRadius);
+        pushParticle(particle, effect);
     }
 
     moveParticle(particle);
