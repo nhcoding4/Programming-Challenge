@@ -253,7 +253,7 @@ class Simulation {
   }
   makeEffect() {
     let connectionDistance = 100;
-    let lineWidth = 3;
+    let lineWidth = 1.5;
     return new Effect(this.context, this.width, this.height, this.totalParticles, connectionDistance, lineWidth, this.mouse);
   }
   makeMouse() {

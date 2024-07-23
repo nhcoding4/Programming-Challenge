@@ -12,7 +12,7 @@ from datetime import datetime
 def is_prime(n: int) -> bool:
     """Checks to see if the passed number is a prime number."""
 
-    i: int = 2
+    i = 2
     while i < n:
         if n % i == 0:
             return False
@@ -26,7 +26,7 @@ def is_prime(n: int) -> bool:
 def calculate(start: int, stop: int, queue: multiprocessing.Queue) -> None:
     """Get prime numbers from start to stop"""
 
-    i: int = start
+    i= start
     while i < stop:
         if is_prime(i):
             queue.put(i)
@@ -41,11 +41,11 @@ def process() -> None:
 
     with Manager() as manager:
 
-        queue: multiprocessing.Queue = manager.Queue()
-        tasks: List[multiprocessing.Process] = []
-        total_workers: int = 24
-        tasks_per_worker: int = 250001 // total_workers
-        current_min: int = 2
+        queue = manager.Queue()
+        tasks: list[multiprocessing.Process] = []
+        total_workers = 24
+        tasks_per_worker = 250001 // total_workers
+        current_min = 2
 
         # Assign tasks.
         for _ in range(total_workers):
@@ -64,7 +64,7 @@ def process() -> None:
         for task in tasks:
             task.join()
 
-        total: List[int] = []
+        total: list[int] = []
 
         while not queue.empty():
             total.append(queue.get())

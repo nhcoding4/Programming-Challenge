@@ -68,7 +68,7 @@ class Simulation {
 
     private makeEffect(): Effect {
         let connectionDistance = 100
-        let lineWidth = 3
+        let lineWidth = 1.5
 
         return new Effect(
             this.context,

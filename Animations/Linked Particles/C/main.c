@@ -4,31 +4,45 @@
 #include <stdint.h>
 #include <math.h>
 
+// ----------------------------------------------------------------------------------------------------------------
+
+// Data needed for drawing and updating on screen 'particles'.
+
 typedef struct
 {
     int32_t x, y, radius, movementX, movementY;
     double friction, pushX, pushY;
 } Particle;
 
+// ----------------------------------------------------------------------------------------------------------------
+
 int main()
 {
+    // Window Properties
     int32_t windowWidth = 1000;
     int32_t windowHeight = 1000;
     int32_t targetFps = 144;
-    int32_t fps = 0;
+    char *title = "Particles rewrite";
+
+    // Particle properties (note if totalParticles are changed then change array size below (Particles particles[x]).)
     int32_t totalParticles = 1000;
     int32_t connectionDistance = 100;
+    int32_t lowerMovementBound = -3;
+    int32_t upperMovementBound = 3;
+
+    // Mouse properties
     int32_t mouseRadius = 250;
     int32_t mouseX = 0;
     int32_t mouseY = 0;
+    bool mouseDown = false;
 
+    // Connection properties
     double lineThickness = 2.5;
     double pushPower = 2.0;
 
-    char *title = "Particles rewrite";
-    char fpsValue[4] = {};
-
-    bool mouseDown = false;
+    // Fps counter properties.
+    char fpsValue[5] = {};
+    int32_t fps = 0;
 
     // ----------------------------------------------------------------------------------------------------------------
 
@@ -49,8 +63,8 @@ int main()
             radius : GetRandomValue(5, 15),
             x : GetRandomValue(newParticle.radius, windowWidth - newParticle.radius),
             y : GetRandomValue(newParticle.radius, windowHeight - newParticle.radius),
-            movementX : GetRandomValue(-2, 2),
-            movementY : GetRandomValue(-2, 2),
+            movementX : GetRandomValue(lowerMovementBound, upperMovementBound),
+            movementY : GetRandomValue(lowerMovementBound, upperMovementBound),
         };
 
         if (newParticle.radius <= 7)
@@ -91,8 +105,8 @@ int main()
             {
                 particles[i].x = GetRandomValue(particles[i].radius, windowWidth - particles[i].radius);
                 particles[i].y = GetRandomValue(particles[i].radius, windowHeight - particles[i].radius);
-                particles[i].movementX = GetRandomValue(-2, 2);
-                particles[i].movementY = GetRandomValue(-2, 2);
+                particles[i].movementX = GetRandomValue(lowerMovementBound, upperMovementBound);
+                particles[i].movementY = GetRandomValue(lowerMovementBound, upperMovementBound);
             }
         }
 
@@ -130,7 +144,7 @@ int main()
                 double dy = particles[i].y - mouseY;
                 double distance = hypot(dx, dy);
 
-                if (distance < 100.0)
+                if (distance < mouseRadius)
                 {
                     double power = (mouseRadius / distance) * pushPower;
                     double angle = atan2(dy, dx);
@@ -199,7 +213,7 @@ int main()
 
                     Vector2 start = {particles[i].x, particles[i].y};
                     Vector2 end = {particles[j].x, particles[j].y};
-                    Color color = {255, 255, 255, (int)255 * opacity};
+                    Color color = {255, 255, 255, 255 * opacity}; // white + transparency.
 
                     DrawLineEx(start, end, lineThickness, color);
                 }

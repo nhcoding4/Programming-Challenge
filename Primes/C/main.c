@@ -1,37 +1,42 @@
-// 5.9 seconds
-
-#include <stdio.h>
 #include <stdlib.h>
+#include <stdio.h>
+#include <stdbool.h>
 
-int is_prime(int n)
+typedef struct
 {
-    for (int i = 2; i < n; i++)
+    int capacity;
+    int *data;
+} List;
+
+bool isPrime(int i)
+{
+    for (int x = 2; x < i; x++)
     {
-        if (n % i == 0)
-            return 0;
+        if (i % x == 0)
+        {
+            return false;
+        }
     }
-    return 1;
+    return true;
 }
 
 int main()
 {
-    int captacity = 1000;
-    int *primes = malloc(sizeof(int) * captacity);
-    int found = 0;
+    List foundPrimes = {
+        capacity : 1,
+        data : (int *)malloc(sizeof(int) * foundPrimes.capacity),
+    };
 
     for (int i = 2; i < 250001; i++)
     {
-        if (is_prime(i))
+        if (isPrime(i))
         {
-            primes[found] = i;
-            found++;
-            if (found == captacity - 1)
-            {
-                captacity *= 2;
-                primes = realloc(primes, sizeof(int) * captacity);
-            }
+            foundPrimes.data[foundPrimes.capacity - 1] = i;
+            foundPrimes.capacity++;
+            foundPrimes.data = realloc(foundPrimes.data, sizeof(int) * foundPrimes.capacity);
         }
     }
 
-    printf("found: %d prime numbers\n", found);
+    printf("Found: %i\n", foundPrimes.capacity-1);
+    free(foundPrimes.data);
 }
