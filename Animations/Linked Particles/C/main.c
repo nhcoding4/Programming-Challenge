@@ -1,6 +1,7 @@
 #include <raylib.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include <stdlib.h>
 #include <stdint.h>
 #include <math.h>
 
@@ -13,6 +14,15 @@ typedef struct
     int32_t x, y, radius, movementX, movementY;
     double friction, pushX, pushY;
 } Particle;
+
+typedef struct
+{
+    Vector2 *start;
+    Vector2 *end;
+    Color *colors;
+    int32_t elements, capacity;
+
+} locationData;
 
 // ----------------------------------------------------------------------------------------------------------------
 
@@ -43,6 +53,15 @@ int main()
     // Fps counter properties.
     char fpsValue[5] = {};
     int32_t fps = 0;
+
+    // Line data
+    locationData frameLineData = {
+        start : NULL,
+        end : NULL,
+        colors : NULL,
+        elements : 0,
+        capacity : 0,
+    };
 
     // ----------------------------------------------------------------------------------------------------------------
 
@@ -115,7 +134,7 @@ int main()
         // Update FPS counter.
 
         fps = GetFPS();
-        sprintf(fpsValue, "%d", fps);
+        sprintf(fpsValue, "%d", fps);        
 
         // ------------------------------------------------------------------------------------------------------------
 
@@ -183,16 +202,19 @@ int main()
 
         // ------------------------------------------------------------------------------------------------------------
 
-        // Drawing
+        // Calculate the lines to draw between particles.
 
-        // ------------------------------------------------------------------------------------------------------------
+        frameLineData.capacity = 1000;
+        frameLineData.elements = 0;
+        frameLineData.start = (Vector2 *)malloc(sizeof(Vector2) * frameLineData.capacity);
+        frameLineData.end = (Vector2 *)malloc(sizeof(Vector2) * frameLineData.capacity);
+        frameLineData.colors = (Color *)malloc(sizeof(Color) * frameLineData.capacity);
 
-        BeginDrawing();
-        ClearBackground(BLACK);
-
-        // ------------------------------------------------------------------------------------------------------------
-
-        // Draw Lines.
+        if (frameLineData.start == NULL || frameLineData.end == NULL || frameLineData.colors == NULL)
+        {
+            printf("Error allocating memory for line data vectors.\n");
+            exit(1);
+        }
 
         for (int32_t i = 0; i < totalParticles; i++)
         {
@@ -211,13 +233,48 @@ int main()
                 {
                     double opacity = 1 - (distance / connectionDistance);
 
-                    Vector2 start = {particles[i].x, particles[i].y};
-                    Vector2 end = {particles[j].x, particles[j].y};
+                    Vector2 startData = {particles[i].x, particles[i].y};
+                    Vector2 endData = {particles[j].x, particles[j].y};
                     Color color = {255, 255, 255, 255 * opacity}; // white + transparency.
 
-                    DrawLineEx(start, end, lineThickness, color);
+                    frameLineData.start[frameLineData.elements] = startData;
+                    frameLineData.end[frameLineData.elements] = endData;
+                    frameLineData.colors[frameLineData.elements] = color;
+                    frameLineData.elements++;
+
+                    if (frameLineData.elements >= frameLineData.capacity - 2)
+                    {
+                        frameLineData.capacity += 1000;
+                        frameLineData.start = (Vector2 *)realloc(frameLineData.start, sizeof(Vector2) * frameLineData.capacity);
+                        frameLineData.end = (Vector2 *)realloc(frameLineData.end, sizeof(Vector2) * frameLineData.capacity);
+                        frameLineData.colors = (Color *)realloc(frameLineData.colors, sizeof(Color) * frameLineData.capacity);
+
+                        if (frameLineData.start == NULL || frameLineData.end == NULL)
+                        {
+                            printf("Error allocating memory for line data vectors.\n");
+                            exit(1);
+                        }
+                    }
                 }
             }
+        }
+
+        // ------------------------------------------------------------------------------------------------------------
+
+        // Drawing
+
+        // ------------------------------------------------------------------------------------------------------------
+
+        BeginDrawing();
+        ClearBackground(BLACK);
+
+        // ------------------------------------------------------------------------------------------------------------
+
+        // Draw Lines.
+
+        for (int32_t i = 0; i < frameLineData.elements; i++)
+        {
+            DrawLineEx(frameLineData.start[i], frameLineData.end[i], lineThickness, frameLineData.colors[i]);
         }
 
         // ------------------------------------------------------------------------------------------------------------
@@ -241,6 +298,10 @@ int main()
         EndDrawing();
 
         // ------------------------------------------------------------------------------------------------------------
+
+        free(frameLineData.start);
+        free(frameLineData.end);
+        free(frameLineData.colors);
     }
 
     // Free Resources

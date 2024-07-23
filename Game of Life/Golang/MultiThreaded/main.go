@@ -11,7 +11,7 @@ Multithreaded vs Single threaded benchmarks: 10600k | Rtx 3070.
 import "math"
 
 func main() {
-	var cellSize int32 = 2
+	var cellSize int32 = 3
 	simulation := Simulation{
 		rows:      int32(math.Floor(1080 / float64(cellSize))),
 		columns:   int32(math.Floor(1920 / float64(cellSize))),
