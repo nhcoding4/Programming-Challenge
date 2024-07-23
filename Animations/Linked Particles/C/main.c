@@ -1,25 +1,26 @@
 #include <raylib.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include <math.h>
 
 typedef struct
 {
-    int x, y, radius, movementX, movementY;
+    int32_t x, y, radius, movementX, movementY;
     double friction, pushX, pushY;
 } Particle;
 
 int main()
 {
-    int windowWidth = 1000;
-    int windowHeight = 1000;
-    int targetFps = 144;
-    int fps = 0;
-    int totalParticles = 1000;
-    int connectionDistance = 100;
-    int mouseRadius = 250;
-    int mouseX = 0;
-    int mouseY = 0;
+    int32_t windowWidth = 1000;
+    int32_t windowHeight = 1000;
+    int32_t targetFps = 144;
+    int32_t fps = 0;
+    int32_t totalParticles = 1000;
+    int32_t connectionDistance = 100;
+    int32_t mouseRadius = 250;
+    int32_t mouseX = 0;
+    int32_t mouseY = 0;
 
     double lineThickness = 2.5;
     double pushPower = 2.0;
@@ -42,7 +43,7 @@ int main()
     // Make Particles.
 
     Particle particles[1000] = {};
-    for (int i = 0; i < totalParticles; i++)
+    for (int32_t i = 0; i < totalParticles; i++)
     {
         Particle newParticle = {
             radius : GetRandomValue(5, 15),
@@ -86,7 +87,7 @@ int main()
         {
             windowWidth = GetScreenWidth();
             windowHeight = GetScreenHeight();
-            for (int i = 0; i < totalParticles; i++)
+            for (int32_t i = 0; i < totalParticles; i++)
             {
                 particles[i].x = GetRandomValue(particles[i].radius, windowWidth - particles[i].radius);
                 particles[i].y = GetRandomValue(particles[i].radius, windowHeight - particles[i].radius);
@@ -97,14 +98,14 @@ int main()
 
         // ------------------------------------------------------------------------------------------------------------
 
-        // Fps counter.
+        // Update FPS counter.
 
         fps = GetFPS();
         sprintf(fpsValue, "%d", fps);
 
         // ------------------------------------------------------------------------------------------------------------
 
-        // Mouse status.
+        // Update Mouse status.
 
         if (IsMouseButtonDown(MOUSE_BUTTON_LEFT))
         {
@@ -119,9 +120,9 @@ int main()
 
         // ------------------------------------------------------------------------------------------------------------
 
-        // Position.
+        // Update Position.
 
-        for (int i = 0; i < totalParticles; i++)
+        for (int32_t i = 0; i < totalParticles; i++)
         {
             if (mouseDown)
             {
@@ -179,17 +180,17 @@ int main()
 
         // Draw Lines.
 
-        for (int i = 0; i < totalParticles; i++)
+        for (int32_t i = 0; i < totalParticles; i++)
         {
-            for (int j = i; j < totalParticles; j++)
+            for (int32_t j = i; j < totalParticles; j++)
             {
                 if (i == j)
                 {
                     continue;
                 }
 
-                int dx = particles[i].x - particles[j].x;
-                int dy = particles[i].y - particles[j].y;
+                int32_t dx = particles[i].x - particles[j].x;
+                int32_t dy = particles[i].y - particles[j].y;
                 double distance = hypot(dx, dy);
 
                 if (distance < connectionDistance)
@@ -209,7 +210,7 @@ int main()
 
         // Draw particles.
 
-        for (int i = 0; i < totalParticles; i++)
+        for (int32_t i = 0; i < totalParticles; i++)
         {
             Color color = ColorFromHSV((float)particles[i].x, 1.0, 1.0);
             DrawCircle(particles[i].x, particles[i].y, particles[i].radius, color);
@@ -230,7 +231,7 @@ int main()
 
     // Free Resources
 
-    CloseWindow(); 
+    CloseWindow();
 
     // ----------------------------------------------------------------------------------------------------------------
 }
