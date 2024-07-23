@@ -1,34 +1,236 @@
-#include "def.h"
+#include <raylib.h>
+#include <stdio.h>
+#include <stdbool.h>
+#include <math.h>
+
+typedef struct
+{
+    int x, y, radius, movementX, movementY;
+    double friction, pushX, pushY;
+} Particle;
 
 int main()
 {
     int windowWidth = 1000;
     int windowHeight = 1000;
-    int targetFPS = 144;
+    int targetFps = 144;
+    int fps = 0;
     int totalParticles = 1000;
-    int connectionDistance = 200;
+    int connectionDistance = 100;
     int mouseRadius = 250;
+    int mouseX = 0;
+    int mouseY = 0;
+
     double lineThickness = 2.5;
-    double pushPower = 3.0;
-    char *title = "Particles";
+    double pushPower = 2.0;
 
-    Config simulation = makeConfig(windowWidth, windowHeight, targetFPS, totalParticles, title);
-    initSimulation(&simulation);
+    char *title = "Particles rewrite";
+    char fpsValue[4] = {};
 
-    Effect effect = makeEffect(windowWidth, windowHeight, totalParticles, connectionDistance, mouseRadius, lineThickness, pushPower);
+    bool mouseDown = false;
+
+    // ----------------------------------------------------------------------------------------------------------------
+
+    // Window Setup.
+
+    SetConfigFlags(FLAG_WINDOW_RESIZABLE);
+    InitWindow(windowWidth, windowHeight, title);
+    SetTargetFPS(targetFps);
+
+    // ----------------------------------------------------------------------------------------------------------------
+
+    // Make Particles.
+
+    Particle particles[1000] = {};
+    for (int i = 0; i < totalParticles; i++)
+    {
+        Particle newParticle = {
+            radius : GetRandomValue(5, 15),
+            x : GetRandomValue(newParticle.radius, windowWidth - newParticle.radius),
+            y : GetRandomValue(newParticle.radius, windowHeight - newParticle.radius),
+            movementX : GetRandomValue(-2, 2),
+            movementY : GetRandomValue(-2, 2),
+        };
+
+        if (newParticle.radius <= 7)
+        {
+            newParticle.friction = 0.99;
+        }
+        else if (newParticle.radius <= 11)
+        {
+            newParticle.friction = 0.95;
+        }
+        else
+        {
+            newParticle.friction = 0.90;
+        }
+
+        particles[i] = newParticle;
+    }
+
+    // ----------------------------------------------------------------------------------------------------------------
+
+    // Mainloop.
 
     while (!WindowShouldClose())
     {
-        checkScreenSizeChange(&simulation, &effect);
-        update(&effect);
+        // ------------------------------------------------------------------------------------------------------------
+
+        // Updates.
+
+        // ------------------------------------------------------------------------------------------------------------
+
+        // Window Resizing.
+
+        if (IsWindowResized())
+        {
+            windowWidth = GetScreenWidth();
+            windowHeight = GetScreenHeight();
+            for (int i = 0; i < totalParticles; i++)
+            {
+                particles[i].x = GetRandomValue(particles[i].radius, windowWidth - particles[i].radius);
+                particles[i].y = GetRandomValue(particles[i].radius, windowHeight - particles[i].radius);
+                particles[i].movementX = GetRandomValue(-2, 2);
+                particles[i].movementY = GetRandomValue(-2, 2);
+            }
+        }
+
+        // ------------------------------------------------------------------------------------------------------------
+
+        // Fps counter.
+
+        fps = GetFPS();
+        sprintf(fpsValue, "%d", fps);
+
+        // ------------------------------------------------------------------------------------------------------------
+
+        // Mouse status.
+
+        if (IsMouseButtonDown(MOUSE_BUTTON_LEFT))
+        {
+            mouseDown = true;
+            mouseX = GetMouseX();
+            mouseY = GetMouseY();
+        }
+        else
+        {
+            mouseDown = false;
+        }
+
+        // ------------------------------------------------------------------------------------------------------------
+
+        // Position.
+
+        for (int i = 0; i < totalParticles; i++)
+        {
+            if (mouseDown)
+            {
+                double dx = particles[i].x - mouseX;
+                double dy = particles[i].y - mouseY;
+                double distance = hypot(dx, dy);
+
+                if (distance < 100.0)
+                {
+                    double power = (mouseRadius / distance) * pushPower;
+                    double angle = atan2(dy, dx);
+                    particles[i].pushX = cos(angle) * power;
+                    particles[i].pushY = sin(angle) * power;
+                }
+            }
+
+            particles[i].x += particles[i].movementX + round(particles[i].pushX);
+            particles[i].y += particles[i].movementY + round(particles[i].pushY);
+
+            if (particles[i].x < particles[i].radius)
+            {
+                particles[i].x = particles[i].radius;
+                particles[i].movementX *= -1;
+            }
+            if (particles[i].x > windowWidth - particles[i].radius)
+            {
+                particles[i].x = windowWidth - particles[i].radius;
+                particles[i].movementX *= -1;
+            }
+            if (particles[i].y < particles[i].radius)
+            {
+                particles[i].y = particles[i].radius;
+                particles[i].movementY *= -1;
+            }
+            if (particles[i].y > windowHeight - particles[i].radius)
+            {
+                particles[i].y = windowHeight - particles[i].radius;
+                particles[i].movementY *= -1;
+            }
+
+            particles[i].pushX *= particles[i].friction;
+            particles[i].pushY *= particles[i].friction;
+        }
+
+        // ------------------------------------------------------------------------------------------------------------
+
+        // Drawing
+
+        // ------------------------------------------------------------------------------------------------------------
 
         BeginDrawing();
         ClearBackground(BLACK);
-        drawEffect(&effect);
-        displayFPS();
+
+        // ------------------------------------------------------------------------------------------------------------
+
+        // Draw Lines.
+
+        for (int i = 0; i < totalParticles; i++)
+        {
+            for (int j = i; j < totalParticles; j++)
+            {
+                if (i == j)
+                {
+                    continue;
+                }
+
+                int dx = particles[i].x - particles[j].x;
+                int dy = particles[i].y - particles[j].y;
+                double distance = hypot(dx, dy);
+
+                if (distance < connectionDistance)
+                {
+                    double opacity = 1 - (distance / connectionDistance);
+
+                    Vector2 start = {particles[i].x, particles[i].y};
+                    Vector2 end = {particles[j].x, particles[j].y};
+                    Color color = {255, 255, 255, (int)255 * opacity};
+
+                    DrawLineEx(start, end, lineThickness, color);
+                }
+            }
+        }
+
+        // ------------------------------------------------------------------------------------------------------------
+
+        // Draw particles.
+
+        for (int i = 0; i < totalParticles; i++)
+        {
+            Color color = ColorFromHSV((float)particles[i].x, 1.0, 1.0);
+            DrawCircle(particles[i].x, particles[i].y, particles[i].radius, color);
+        }
+
+        // ------------------------------------------------------------------------------------------------------------
+
+        // Draw fps counter.
+
+        DrawText(fpsValue, 0, 0, 40, GREEN);
+
+        // ------------------------------------------------------------------------------------------------------------
+
         EndDrawing();
+
+        // ------------------------------------------------------------------------------------------------------------
     }
 
-    CloseWindow();
-    freeEffect(&effect);
+    // Free Resources
+
+    CloseWindow(); 
+
+    // ----------------------------------------------------------------------------------------------------------------
 }
