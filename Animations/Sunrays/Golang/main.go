@@ -14,7 +14,8 @@ func main() {
 		totalParticles:      1000,
 		mouseRadius:         250,
 		linkDistance:        100,
-		powerPushMultiplier: 2.0,
+		linkThickness:       1.0,
+		powerPushMultiplier: 1.0,
 	}
 	game.init()
 	game.run()
