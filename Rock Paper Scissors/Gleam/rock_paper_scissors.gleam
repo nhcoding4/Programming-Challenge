@@ -10,6 +10,7 @@ pub fn main() {
 
 // ----------------------------------------------------------------------------------------------
 
+/// Main recursive function. Keeps track of game score and starts a new round.
 fn game(user_score: Int, computer_score: Int) {
   let results = round(user_score, computer_score)
 
@@ -33,14 +34,14 @@ fn game(user_score: Int, computer_score: Int) {
 
 // ----------------------------------------------------------------------------------------------
 
+/// Takes a selection from the user and computer and increases the score of the winner.
 fn round(user_score: Int, computer_score: Int) -> #(Int, Int) {
   let user =
     take_input("Enter your choice:\n1) Rock\n2) Paper\n3) Scissors\n-> ")
   let computer = computer_choice()
 
   let print = fn(x, y) {
-    let text = "You picked: " <> x <> "\nComputer picked: " <> y
-    io.println(text)
+    io.println("You picked: " <> x <> "\nComputer picked: " <> y)
   }
   print(user, computer)
 
@@ -51,6 +52,8 @@ fn round(user_score: Int, computer_score: Int) -> #(Int, Int) {
 }
 
 // ----------------------------------------------------------------------------------------------
+
+// Takes a valid input from the user.
 
 fn take_input(prompt: String) -> String {
   let assert Ok(choice) = erlang.get_line(prompt)
@@ -65,6 +68,8 @@ fn take_input(prompt: String) -> String {
 
 // ----------------------------------------------------------------------------------------------
 
+// Picks a random option.
+
 fn computer_choice() -> String {
   let computer = int.random(3)
 
@@ -76,6 +81,8 @@ fn computer_choice() -> String {
 }
 
 // ----------------------------------------------------------------------------------------------
+
+// Match inputs to a game result.
 
 fn compare(user: String, computer: String) -> #(String, Int, Int) {
   let inputs = #(user, computer)
