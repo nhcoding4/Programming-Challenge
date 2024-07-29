@@ -53,8 +53,7 @@ fn round(user_score: Int, computer_score: Int) -> #(Int, Int) {
 
 // ----------------------------------------------------------------------------------------------
 
-// Takes a valid input from the user.
-
+/// Takes a valid input from the user.
 fn take_input(prompt: String) -> String {
   let assert Ok(choice) = erlang.get_line(prompt)
 
@@ -68,8 +67,7 @@ fn take_input(prompt: String) -> String {
 
 // ----------------------------------------------------------------------------------------------
 
-// Picks a random option.
-
+/// Picks a random option.
 fn computer_choice() -> String {
   let computer = int.random(3)
 
@@ -82,8 +80,7 @@ fn computer_choice() -> String {
 
 // ----------------------------------------------------------------------------------------------
 
-// Match inputs to a game result.
-
+/// Match inputs to a game result.
 fn compare(user: String, computer: String) -> #(String, Int, Int) {
   let inputs = #(user, computer)
   case inputs {
