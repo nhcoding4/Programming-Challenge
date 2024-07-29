@@ -2,7 +2,6 @@
 
 import multiprocessing
 from multiprocessing import Manager
-from typing import List
 from datetime import datetime
 
 

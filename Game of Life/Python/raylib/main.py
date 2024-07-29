@@ -6,12 +6,12 @@ class Simulation:
     def __init__(self) -> None:
         self.window_width = 1920
         self.window_height = 1080
-        self.cell_size = 10
+        self.cell_size = 5
         self.title = "Game of Life"
-        self.target_fps = 60
+        self.target_fps = 144
         self.window_setup()
 
-        self.background_color: rl.Color = rl.GRAY
+        self.background_color: rl.Color = rl.BLACK
         self.grid = Grid(self.window_width, self.window_height, self.cell_size)
 
     # -------------------------------------------------------------------------
