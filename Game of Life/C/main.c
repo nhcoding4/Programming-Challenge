@@ -6,7 +6,7 @@ int main()
         screenWidth : 1920,
         screenHeight : 1080,
         fps : 144,
-        cellSize : 3,
+        cellSize : 2,
         title : "Game of Life: C",
         background : BLACK,
     };
