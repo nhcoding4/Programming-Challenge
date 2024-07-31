@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <stdio.h>
-#include <time.h>
 
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -34,7 +33,7 @@ int main()
     const uint64_t total_workers = 24;
     const uint64_t total_value = 250001;
     Range ranges[24] = {};
-    
+
     split_work(ranges, &total_workers, &total_value);
 
     execute_work(ranges, &total_workers);
