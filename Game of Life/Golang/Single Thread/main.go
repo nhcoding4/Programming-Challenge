@@ -20,7 +20,7 @@ func main() {
 
 	screen_width := 1920
 	screen_height := 1080
-	cells_size := 3
+	cells_size := 2
 	const title = "Game of Life"
 	target_fps := int32(1000)
 	rl.InitWindow(int32(screen_width), int32(screen_height), title)

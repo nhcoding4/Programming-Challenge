@@ -69,7 +69,7 @@ int main()
 
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     InitWindow(windowWidth, windowHeight, title);
-    SetTargetFPS(targetFps);
+    //SetTargetFPS(targetFps);
 
     // ----------------------------------------------------------------------------------------------------------------
 
